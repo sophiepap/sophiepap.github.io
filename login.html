@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WE LIVE INSIDE A DREAM</title>
+
+    <style>
+        @keyframes curtainLeft {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -50vw;
+            }
+        }
+
+        @keyframes curtainRight {
+            0% {
+                right: 0;
+            }
+
+            100% {
+                right: -50vw;
+            }
+        }
+
+        .curtain {
+            position: fixed;
+            top: 0;
+            width: 50vw;
+            height: 100vh;
+            background-color: #8B0000;
+            z-index: 9999;
+        }
+
+        .curtain-left {
+            left: 0;
+            animation: curtainLeft 2.5s ease-out forwards;
+        }
+
+        .curtain-right {
+            right: 0;
+            animation: curtainRight 2.5s ease-out forwards;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(2px, -2px);
+            }
+
+            60% {
+                transform: translate(-1px, 1px);
+            }
+
+            80% {
+                transform: translate(1px, -1px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 0.07;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        body {
+            background-color: black;
+            color: #d10000;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            animation: glitch 1s infinite;
+            font-size: 32px;
+        }
+
+        input,
+        button {
+            background: transparent;
+            border: 1px solid #d10000;
+            color: #d10000;
+            font-size: 18px;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 20px;
+            animation: glitch 0.5s infinite;
+        }
+
+        .static {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif');
+            opacity: 0.07;
+            z-index: -1;
+            background-size: cover;
+            transition: opacity 0.5s ease;
+        }
+
+        .flicker {
+            animation: flicker 0.6s steps(1) 4;
+        }
+
+        input[type="button"]:hover,
+        button:hover,
+        .login-button:hover {
+            background-color: #d10000;
+            color: black;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background-color: transparent;
+            border: 1px solid #d10000;
+            color: #d10000;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 10px 15px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #d10000;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="static" id="staticBg"></div>
+
+    <a href="index.html" class="home-button">Home</a>
+
+    <h1>WE LIVE INSIDE A DREAM</h1>
+    <p>Identify yourself.</p>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="checkLogin()">Enter</button>
+    <div class="result" id="loginResult"></div>
+
+    <script>
+        let errorCount = 0;
+
+        function checkLogin() {
+            const user = document.getElementById("username").value.trim().toLowerCase();
+            const pass = document.getElementById("password").value.trim();
+            const loginResult = document.getElementById("loginResult");
+            const staticBg = document.getElementById("staticBg");
+
+            if (user === "monicabelucci" && pass === "1992") {
+                window.location.href = "login-success.html";
+            } else {
+                errorCount++;
+                loginResult.innerText = "Access denied. Try again.";
+
+                if (errorCount >= 3) {
+                    staticBg.classList.add("flicker");
+                    setTimeout(() => {
+                        staticBg.classList.remove("flicker");
+                    }, 2400);
+                    errorCount = 0;
+                }
+            }
+        }
+    </script>
+    <audio id="staticSound" src="sounds/tp.mp3" preload="auto"></audio>
+    <script>
+        document.addEventListener("keydown", function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+                e.preventDefault();
+                document.getElementById("staticSound").play(); // προαιρετικά
+                alert("Saving won't do you any favour.");
+                return false;
+            }
+        });
+
+        window.addEventListener("beforeunload", function (e) {
+            // Δείξε warning – αν υποστηρίζεται από browser
+            e.preventDefault();
+            e.returnValue = "Leaving now might erase your memory.";
+        });
+
+
+    </script>
+
+    <script>
+        const staticSound = document.getElementById("staticSound");
+
+        // Απενεργοποίηση δεξιού κλικ
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            staticSound.play();
+        });
+
+        // Απενεργοποίηση DevTools / view-source
+        document.addEventListener('keydown', function (e) {
+            const isBlocked = (
+                (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key.toUpperCase())) ||
+                (e.ctrlKey && e.key.toUpperCase() === 'U') ||
+                (e.key === 'F12')
+            );
+
+            if (isBlocked) {
+                e.preventDefault();
+                staticSound.play();
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>
