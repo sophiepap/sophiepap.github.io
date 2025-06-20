@@ -2,10 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>BUT WHO IS THE DREAMER?</title>
-
+    <meta charset="UTF-8" />
+    <title>But who is the dreamer</title>
     <style>
+        body,
+        h1,
+        p,
+        input,
+        button,
+        .result {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* CURTAINS */
         @keyframes curtainLeft {
             0% {
                 left: 0;
@@ -45,6 +57,7 @@
             animation: curtainRight 2.5s ease-out forwards;
         }
 
+        /* CRT + glitch */
         @keyframes glitch {
             0% {
                 transform: translate(0);
@@ -71,12 +84,53 @@
             }
         }
 
-        body {
+        body.crt {
             background-color: black;
             color: #d10000;
             font-family: 'Courier New', monospace;
             text-align: center;
             padding-top: 100px;
+            text-shadow:
+                0 0 2px #d10000,
+                0 0 4px #d10000,
+                0 0 6px #d10000;
+            overflow-x: hidden;
+        }
+
+        .crt::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: repeating-linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0) 0px,
+                    rgba(0, 0, 0, 0) 2px,
+                    rgba(255, 0, 0, 0.08) 3px,
+                    rgba(255, 0, 0, 0.08) 4px);
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        .crt-flicker {
+            animation: flicker 0.12s infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.96;
+            }
+
+            52% {
+                opacity: 1;
+            }
         }
 
         h1 {
@@ -84,20 +138,13 @@
             font-size: 32px;
         }
 
-        input,
-        button {
-            background: transparent;
-            border: 1px solid #d10000;
-            color: #d10000;
-            font-size: 18px;
-            padding: 10px;
-            margin: 10px;
-        }
-
-        .result {
-            margin-top: 30px;
-            font-size: 20px;
-            animation: glitch 0.5s infinite;
+        iframe {
+            width: 70vw;
+            height: 40vw;
+            max-width: 100%;
+            border: none;
+            margin: 30px auto;
+            display: block;
         }
 
         .static {
@@ -112,42 +159,53 @@
             background-size: cover;
         }
 
-        #mainContent {
-            display: none;
+        .home-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background-color: transparent;
+            border: 1px solid #d10000;
+            color: #d10000;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 10px 15px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #d10000;
+            color: black;
         }
     </style>
-
 </head>
 
-<body>
+<body class="crt crt-flicker">
+    <div class="static"></div>
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
+
+    <a href="index.html" class="home-button">Home</a>
+
     <h1>BUT WHO IS THE DREAMER?</h1>
-    <iframe src="https://www.youtube.com/embed/MaH2f7Z5Z1E?autoplay=1&mute=0" allowfullscreen></iframe>
-    <!-- <p>You saw her face...</p> -->
+    <iframe src="https://www.youtube.com/embed/MaH2f7Z5Z1E?autoplay=1&mute=0&loop=1&playlist=MaH2f7Z5Z1E"
+        allowfullscreen></iframe>
 
     <script>
+        // Απενεργοποίηση save
         document.addEventListener("keydown", function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
                 e.preventDefault();
-                document.getElementById("staticSound").play(); // προαιρετικά
                 alert("This dream cannot be saved.");
                 return false;
             }
         });
-        window.addEventListener("beforeunload", function (e) {
-            // Δείξε warning – αν υποστηρίζεται από browser
-            e.preventDefault();
-            e.returnValue = "Leaving now might erase your memory.";
-        });
-
-    </script>
-
-    <script>
-        const staticSound = document.getElementById("staticSound");
 
         // Απενεργοποίηση δεξιού κλικ
         document.addEventListener('contextmenu', event => {
             event.preventDefault();
-            staticSound.play();
         });
 
         // Απενεργοποίηση DevTools / view-source
@@ -157,13 +215,20 @@
                 (e.ctrlKey && e.key.toUpperCase() === 'U') ||
                 (e.key === 'F12')
             );
-
             if (isBlocked) {
                 e.preventDefault();
-                staticSound.play();
                 return false;
             }
         });
+    </script>
+    <script>
+        // Disable copy, cut, paste
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('paste', e => e.preventDefault());
+
+        // Optional: disable dragging text or elements
+        document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 
 </body>

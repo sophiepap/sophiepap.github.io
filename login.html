@@ -2,10 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>WE LIVE INSIDE A DREAM</title>
-
+    <meta charset="UTF-8" />
+    <title>We live inside a dream.</title>
     <style>
+        body,
+        h1,
+        p,
+        input,
+        button,
+        .result {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* CURTAINS */
         @keyframes curtainLeft {
             0% {
                 left: 0;
@@ -45,6 +57,7 @@
             animation: curtainRight 2.5s ease-out forwards;
         }
 
+        /* GLITCH & CRT */
         @keyframes glitch {
             0% {
                 transform: translate(0);
@@ -89,6 +102,11 @@
             font-family: 'Courier New', monospace;
             text-align: center;
             padding-top: 100px;
+            text-shadow:
+                0 0 2px #d10000,
+                0 0 4px #d10000,
+                0 0 6px #d10000;
+            overflow-x: hidden;
         }
 
         h1 {
@@ -105,6 +123,7 @@
             padding: 10px;
             margin: 10px;
             cursor: pointer;
+            font-family: 'Courier New', monospace;
         }
 
         .result {
@@ -120,9 +139,9 @@
             width: 100vw;
             height: 100vh;
             background-image: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif');
-            opacity: 0.07;
-            z-index: -1;
             background-size: cover;
+            z-index: -1;
+            opacity: 0.07;
             transition: opacity 0.5s ease;
         }
 
@@ -131,8 +150,7 @@
         }
 
         input[type="button"]:hover,
-        button:hover,
-        .login-button:hover {
+        button:hover {
             background-color: #d10000;
             color: black;
         }
@@ -162,15 +180,19 @@
 
 <body>
     <div class="static" id="staticBg"></div>
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
 
     <a href="index.html" class="home-button">Home</a>
 
     <h1>WE LIVE INSIDE A DREAM</h1>
     <p>Identify yourself.</p>
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="password" id="password" placeholder="Password"><br>
+    <input type="text" id="username" placeholder="Username" autocomplete="off"><br />
+    <input type="password" id="password" placeholder="Password"><br />
     <button onclick="checkLogin()">Enter</button>
     <div class="result" id="loginResult"></div>
+
+    <audio id="staticSound" src="sounds/tp.mp3" preload="auto"></audio>
 
     <script>
         let errorCount = 0;
@@ -178,68 +200,59 @@
         function checkLogin() {
             const user = document.getElementById("username").value.trim().toLowerCase();
             const pass = document.getElementById("password").value.trim();
-            const loginResult = document.getElementById("loginResult");
+            const result = document.getElementById("loginResult");
             const staticBg = document.getElementById("staticBg");
 
             if (user === "monica bellucci" && pass === "1992") {
                 window.location.href = "login-success.html";
             } else {
                 errorCount++;
-                loginResult.innerText = "Access denied. Try again.";
-
+                result.innerText = "Access denied. Try again.";
                 if (errorCount >= 3) {
                     staticBg.classList.add("flicker");
-                    setTimeout(() => {
-                        staticBg.classList.remove("flicker");
-                    }, 2400);
+                    setTimeout(() => staticBg.classList.remove("flicker"), 2400);
                     errorCount = 0;
                 }
             }
         }
-    </script>
-    <audio id="staticSound" src="sounds/tp.mp3" preload="auto"></audio>
-    <script>
+
+        // Block Save
         document.addEventListener("keydown", function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
                 e.preventDefault();
-                document.getElementById("staticSound").play(); // προαιρετικά
+                document.getElementById("staticSound").play();
                 alert("Saving won't do you any favour.");
                 return false;
             }
         });
 
-        window.addEventListener("beforeunload", function (e) {
-            // Δείξε warning – αν υποστηρίζεται από browser
-            e.preventDefault();
-            e.returnValue = "Leaving now might erase your memory.";
-        });
-
-
-    </script>
-
-    <script>
-        const staticSound = document.getElementById("staticSound");
-
-        // Απενεργοποίηση δεξιού κλικ
+        // Block Right Click
         document.addEventListener('contextmenu', event => {
             event.preventDefault();
-            staticSound.play();
+            document.getElementById("staticSound").play();
         });
 
-        // Απενεργοποίηση DevTools / view-source
+        // Block DevTools
         document.addEventListener('keydown', function (e) {
-            const isBlocked = (
+            const isBlocked =
                 (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key.toUpperCase())) ||
                 (e.ctrlKey && e.key.toUpperCase() === 'U') ||
-                (e.key === 'F12')
-            );
-
+                (e.key === 'F12');
             if (isBlocked) {
                 e.preventDefault();
-                staticSound.play();
+                document.getElementById("staticSound").play();
                 return false;
             }
         });
+    </script>
+    <script>
+        // Disable copy, cut, paste
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('paste', e => e.preventDefault());
+
+        // Optional: disable dragging text or elements
+        document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 
 </body>
