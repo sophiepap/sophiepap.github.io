@@ -210,11 +210,12 @@
     </script>
 
     <script>
+        // Block Save
         document.addEventListener("keydown", function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
                 e.preventDefault();
-                document.getElementById("staticSound").play(); // προαιρετικά
-                alert("This dream cannot be saved.");
+                document.getElementById("staticSound").play();
+                alert("Saving won't do you any favour.");
                 return false;
             }
         });
