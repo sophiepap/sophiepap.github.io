@@ -1,0 +1,490 @@
+:root {
+  --cream: #efe7da;
+  --ink: #171716;
+  --muted: #a89d91;
+  --paper: #f4eee4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #101010;
+  color: var(--cream);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+.room-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #111;
+}
+
+.room-page canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.top-ui {
+  position: fixed;
+  z-index: 20;
+  top: 24px;
+  left: 28px;
+  right: 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  pointer-events: none;
+}
+
+.top-ui > * {
+  pointer-events: auto;
+}
+
+.top-ui > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.top-ui strong {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+}
+
+.top-ui span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.78rem;
+}
+
+.top-ui nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.top-ui nav a,
+.top-ui nav button {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #f6f0e7;
+  background: rgba(20, 20, 20, 0.25);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.hint {
+  position: fixed;
+  z-index: 10;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.object-label {
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(24, 22, 20, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 6px 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.paper-cv {
+  color: #28231f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.screen-overlay {
+  position: fixed;
+  inset: 8vh 8vw;
+  z-index: 30;
+  background:
+    linear-gradient(180deg, rgba(12, 25, 26, 0.88), rgba(6, 12, 13, 0.96)),
+    radial-gradient(circle at top right, #244d53, transparent 42%);
+  border: 1px solid rgba(198, 238, 236, 0.15);
+  border-radius: 22px;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+.fake-os-bar {
+  height: 42px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fake-os-content {
+  padding: clamp(28px, 6vw, 90px);
+  max-width: 1100px;
+}
+
+.fake-os-content h1,
+.story-copy h1 {
+  margin: 10px 0;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.92;
+  max-width: 900px;
+}
+
+.fake-os-content > p {
+  max-width: 640px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 48px;
+}
+
+.project-grid article {
+  min-height: 170px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.project-grid article span {
+  opacity: 0.45;
+  font-size: 0.75rem;
+}
+
+.project-grid article h3 {
+  margin: 48px 0 8px;
+  font-size: 1.25rem;
+}
+
+.project-grid article p {
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.close-button {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 50%;
+  background: rgba(0,0,0,.25);
+  color: #fff;
+  cursor: pointer;
+}
+
+.side-panel {
+  position: fixed;
+  z-index: 30;
+  right: 5vw;
+  top: 11vh;
+  width: min(420px, 90vw);
+  padding: 34px;
+  color: #221e19;
+  background: rgba(239, 226, 206, 0.94);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.35);
+}
+
+.side-panel .close-button,
+.paper-overlay .close-button {
+  color: #222;
+  border-color: rgba(0,0,0,.12);
+}
+
+.side-panel p {
+  line-height: 1.7;
+}
+
+.mini-card {
+  border-top: 1px solid rgba(0,0,0,.12);
+  padding: 16px 0;
+}
+
+.paper-overlay {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-1deg);
+  width: min(520px, 90vw);
+  padding: 48px;
+  color: #28221d;
+  background: #f3ebdd;
+  box-shadow: 0 30px 90px rgba(0,0,0,.35);
+}
+
+.eyebrow {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  opacity: .62;
+}
+
+.story-page {
+  min-height: 100vh;
+  background: #090909;
+}
+
+.story-nav {
+  position: fixed;
+  z-index: 50;
+  left: 24px;
+  right: 24px;
+  top: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.68);
+}
+
+.scroll-story {
+  position: relative;
+  overflow: clip;
+}
+
+.story-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      #0b1220 0%,
+      #192242 18%,
+      #352143 34%,
+      #6b2d24 50%,
+      #8f270f 63%,
+      #3c120c 78%,
+      #050505 100%
+    );
+}
+
+.moon {
+  position: fixed;
+  z-index: 1;
+  right: 10vw;
+  top: 12vh;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 36%, #ffdca7 0 12%, #ca7b43 38%, #4f2013 100%);
+  box-shadow: 0 0 60px rgba(255, 128, 48, .18);
+}
+
+.story-section {
+  position: relative;
+  z-index: 2;
+  min-height: 110vh;
+  padding: 12vh 8vw;
+}
+
+.hero-section {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 18vh;
+}
+
+.story-copy {
+  max-width: 1000px;
+}
+
+.story-copy p:not(.eyebrow) {
+  max-width: 560px;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(255,255,255,.66);
+}
+
+.middle-section {
+  min-height: 200vh;
+}
+
+.floating-line {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  width: 1px;
+  height: 0;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.5), transparent);
+}
+
+.media-card {
+  width: min(760px, 92vw);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 58vh;
+}
+
+.media-card-right {
+  margin-left: auto;
+}
+
+.poster {
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  display: grid;
+  place-items: end start;
+  padding: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.poster span {
+  font-size: .7rem;
+  letter-spacing: .2em;
+}
+
+.poster-book {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.16), transparent 26%),
+    linear-gradient(135deg, #54281e, #1d0f0c);
+}
+
+.poster-film {
+  background:
+    linear-gradient(160deg, transparent 0 50%, rgba(255,255,255,.06) 51%),
+    linear-gradient(145deg, #171717, #4f4e52);
+}
+
+.poster-game {
+  background:
+    linear-gradient(180deg, #6b7894, #db8b55 55%, #432a2a);
+}
+
+.media-card h2 {
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  margin: 8px 0;
+}
+
+.media-card p:last-child {
+  color: rgba(255,255,255,.68);
+  line-height: 1.7;
+}
+
+.warm-section {
+  min-height: 180vh;
+}
+
+.quote-block {
+  max-width: 850px;
+  margin: 35vh auto 0;
+  text-align: center;
+}
+
+.quote-block span {
+  font-size: .72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .55;
+}
+
+.quote-block h2 {
+  font-size: clamp(2.8rem, 7vw, 7rem);
+  line-height: .98;
+  margin: 16px 0 0;
+}
+
+.ending-section {
+  min-height: 110vh;
+  display: grid;
+  place-items: center;
+}
+
+.ending-copy {
+  max-width: 720px;
+  text-align: center;
+}
+
+.ending-copy h2 {
+  font-size: clamp(2.4rem, 5vw, 5.5rem);
+  line-height: 1;
+  margin: 8px 0 24px;
+}
+
+.ending-copy p:last-child {
+  color: rgba(255,255,255,.66);
+  line-height: 1.75;
+}
+
+@media (max-width: 800px) {
+  .top-ui {
+    top: 14px;
+    left: 14px;
+    right: 14px;
+  }
+
+  .top-ui nav {
+    max-width: 60vw;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-overlay {
+    inset: 4vh 4vw;
+  }
+
+  .media-card {
+    grid-template-columns: 1fr;
+    margin-bottom: 35vh;
+  }
+
+  .poster {
+    width: min(260px, 72vw);
+  }
+
+  .moon {
+    width: 82px;
+    height: 82px;
+  }
+}
