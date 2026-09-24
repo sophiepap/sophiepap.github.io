@@ -1,9 +1,7 @@
 "use client";
-
-import { Canvas, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import {
-  Environment, Html, useGLTF, useProgress, useTexture
-} from "@react-three/drei"; import { Suspense, useEffect, useRef, useState } from "react";
+import { Canvas, ThreeEvent, useFrame, useThree, } from "@react-three/fiber";
+import { Environment, Html, useGLTF, useProgress, useTexture, } from "@react-three/drei";
+import { Suspense, useEffect, useRef, useState, } from "react";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
 
@@ -12,13 +10,27 @@ type Props = {
   onTargetChange: (target: string | null) => void;
 };
 
-type CameraTarget = "room" | "computer" | "board" | "cv";
+type CameraTarget =
+  | "room"
+  | "computer"
+  | "board"
+  | "cv";
+
+const INTERACTABLES = [
+  "Computer",
+  "Bookshelf",
+  "Board",
+  "CV",
+];
 
 /* --------------------------------------------------
    CAMERA
 -------------------------------------------------- */
 
-function CameraRig({ target, scene, }: {
+function CameraRig({
+  target,
+  scene,
+}: {
   target: CameraTarget;
   scene: THREE.Object3D;
 }) {
@@ -44,22 +56,23 @@ function CameraRig({ target, scene, }: {
 
     const targetPosition = new THREE.Vector3();
     const targetQuaternion = new THREE.Quaternion();
-
     blenderCamera.getWorldPosition(targetPosition);
     blenderCamera.getWorldQuaternion(targetQuaternion);
 
-    // Στην πρώτη φόρτωση: πήγαινε κατευθείαν στην Camera_Room
+    // Πρώτη φόρτωση:
+    // πήγαινε αμέσως στην Camera_Room
     if (!initialized.current) {
       camera.position.copy(targetPosition);
+
       camera.quaternion.copy(targetQuaternion);
 
       if ((blenderCamera as THREE.Camera).type === "PerspectiveCamera") {
         const sourceCamera = blenderCamera as THREE.PerspectiveCamera;
         const targetCamera = camera as THREE.PerspectiveCamera;
-
         targetCamera.fov = sourceCamera.fov;
         targetCamera.near = sourceCamera.near;
         targetCamera.far = sourceCamera.far;
+
         targetCamera.updateProjectionMatrix();
       }
 
@@ -67,9 +80,8 @@ function CameraRig({ target, scene, }: {
       return;
     }
 
-    // Μετά την αρχική φόρτωση: cinematic transition
+    // Cinematic transition
     const speed = 1 - Math.pow(0.001, delta);
-
     camera.position.lerp(targetPosition, speed);
     camera.quaternion.slerp(targetQuaternion, speed);
   });
@@ -86,87 +98,113 @@ function RoomModel({ scene, onTargetChange, }: {
   onTargetChange: (target: string | null) => void;
 }) {
   const router = useRouter();
-  const [hovered, setHovered] = useState<string | null>(
-    null
-  );
+  const [hovered, setHovered] = useState<string | null>(null);
+  const hoveredObject = useRef<THREE.Object3D | null>(null);
 
-  // Φόρτωση textures για τα αντικειμενα που δεν έχουν και είναι γυμνούλικα
+  /* --------------------------------------------------
+     TEXTURES
+  -------------------------------------------------- */
+
   const deskTextures = useTexture({
     map: "/textures/Desk/TexturesCom_BleachedOakVeneer_M.png",
   });
-  deskTextures.map.colorSpace = THREE.SRGBColorSpace;
 
+  deskTextures.map.colorSpace =
+    THREE.SRGBColorSpace;
 
-  //  Ενεργοποιούμε shadows σε όλα τα meshes που ήρθαν από το Blender.
+  /* --------------------------------------------------
+     HELPERS
+  -------------------------------------------------- */
+
+  function getInteractiveRoot(object: THREE.Object3D): THREE.Object3D | null {
+    let current: | THREE.Object3D | null = object;
+
+    while (current) {
+      if (INTERACTABLES.includes(current.name)) {
+        return current;
+      }
+      current = current.parent;
+    }
+    return null;
+  }
+
+  function findInteractiveObject(object: THREE.Object3D): string | null {
+    return (getInteractiveRoot(object)?.name ?? null
+    );
+  }
+
+  /* --------------------------------------------------
+     MATERIALS + SHADOWS
+  -------------------------------------------------- */
+
   useEffect(() => {
     scene.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) return;
+      if (!(object instanceof THREE.Mesh)) {
+        return;
+      }
 
       object.castShadow = true;
       object.receiveShadow = true;
 
       if (object.name === "Desk") {
-        object.material = new THREE.MeshStandardMaterial({
-          map: deskTextures.map,
-          // normalMap: deskTextures.normalMap,
-          // roughnessMap: deskTextures.roughnessMap,
-        });
+        object.material = new THREE.MeshStandardMaterial(
+          {
+            map: deskTextures.map,
+            roughness: 0.65,
+          }
+        );
       }
-
-
     });
-  }, [scene, deskTextures]);
+  }, [
+    scene,
+    deskTextures,
+  ]);
 
+  /* --------------------------------------------------
+     HOVER ANIMATION
+  -------------------------------------------------- */
 
-  /*
-    Ψάχνουμε προς τα πάνω στο hierarchy
-    μέχρι να βρούμε ένα από τα αντικείμενα
-    που μας ενδιαφέρουν.
-    Άρα:
-    Computer
-       └ Monitor
-           └ Screen
-    Αν πατήσεις Screen,
-    θα καταλάβει ότι ανήκει στο Computer.
-  */
-  function findInteractiveObject(object: THREE.Object3D): string | null {
-    const interactables = [
-      "Computer",
-      "Bookshelf",
-      "Board",
-      "CV",
-    ];
+  useFrame((_, delta) => {
+    const speed =
+      1 - Math.pow(0.001, delta);
 
-    let current: THREE.Object3D | null = object;
-
-    while (current) {
-      if (interactables.includes(current.name)) {
-        return current.name;
+    scene.traverse((object) => {
+      if (!INTERACTABLES.includes(object.name)
+      ) {
+        return;
       }
+      const isHovered = hoveredObject.current === object;
+      const targetScale = isHovered ? 1.005 : 1;
+      object.scale.x = THREE.MathUtils.lerp(object.scale.x, targetScale, speed);
 
-      current = current.parent;
-    }
+      object.scale.y = THREE.MathUtils.lerp(object.scale.y, targetScale, speed);
 
-    return null;
-  }
+      object.scale.z = THREE.MathUtils.lerp(object.scale.z, targetScale, speed);
+    });
+  });
+
+  /* --------------------------------------------------
+     INTERACTION EVENTS
+  -------------------------------------------------- */
 
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
-
     const target = findInteractiveObject(event.object);
 
     if (!target) return;
-
     switch (target) {
       case "Computer":
         onTargetChange("computer");
         break;
+
       case "Board":
         onTargetChange("board");
         break;
+
       case "CV":
         onTargetChange("cv");
         break;
+
       case "Bookshelf":
         router.push("/library");
         break;
@@ -174,43 +212,48 @@ function RoomModel({ scene, onTargetChange, }: {
   }
 
   function handlePointerMove(event: ThreeEvent<PointerEvent>) {
-    const target = findInteractiveObject(event.object);
-    setHovered(target);
-    document.body.style.cursor = target ? "pointer" : "default";
+    event.stopPropagation();
+    const interactiveObject = getInteractiveRoot(event.object);
+    hoveredObject.current = interactiveObject;
+    setHovered(interactiveObject?.name ?? null);
+    document.body.style.cursor = interactiveObject ? "pointer" : "default";
   }
 
-
   function handlePointerOut() {
+    hoveredObject.current = null;
     setHovered(null);
     document.body.style.cursor = "default";
   }
 
+  /* --------------------------------------------------
+     MODEL
+  -------------------------------------------------- */
 
   return (
     <group
       onClick={handleClick}
-      onPointerMove={handlePointerMove}
-      onPointerOut={handlePointerOut}
-
-      /*
-        ΕΔΩ μπορείς να διορθώσεις scale /
-        position / rotation του Blender scene
-        αν χρειαστεί.
-      */
+      onPointerMove={
+        handlePointerMove
+      }
+      onPointerOut={
+        handlePointerOut
+      }
       scale={1}
       position={[0, 0, 0]}
       rotation={[0, 0, 0]}
     >
-      <primitive object={scene} />
+      <primitive
+        object={scene}
+      />
 
       {/*
-        Αργότερα μπορούμε εδώ να βάλουμε
-        outline/glow στο hovered object.
+        hovered υπάρχει ήδη διαθέσιμο
+        αν αργότερα θέλουμε labels,
+        glow ή άλλο interaction.
       */}
     </group>
   );
 }
-
 
 /* --------------------------------------------------
    SCENE
@@ -218,41 +261,68 @@ function RoomModel({ scene, onTargetChange, }: {
 
 function Scene({ activeTarget, onTargetChange, }: Props) {
   const { scene } = useGLTF("/models/room.glb");
-
   const hour = new Date().getHours();
   const night = hour >= 20 || hour < 7;
-
-  const cameraTarget: CameraTarget = activeTarget === "computer"
-    ? "computer"
-    : activeTarget === "board"
-      ? "board"
-      : activeTarget === "cv"
-        ? "cv"
-        : "room";
+  const cameraTarget:
+    CameraTarget =
+    activeTarget ===
+      "computer"
+      ? "computer"
+      : activeTarget ===
+        "board"
+        ? "board"
+        : activeTarget ===
+          "cv"
+          ? "cv"
+          : "room";
 
   return (
     <>
       <CameraRig
-        target={cameraTarget}
+        target={
+          cameraTarget
+        }
         scene={scene}
       />
 
       <color
         attach="background"
-        args={[night ? "#101725" : "#9ea8ad"]}
+        args={[
+          night
+            ? "#101725"
+            : "#9ea8ad",
+        ]}
       />
 
-      <ambientLight intensity={night ? 0.6 : 1.5} />
+      <ambientLight
+        intensity={
+          night
+            ? 0.6
+            : 1.5
+        }
+      />
 
       <directionalLight
-        position={[5, 8, 5]}
-        intensity={night ? 0.5 : 2}
+        position={[
+          5,
+          8,
+          5,
+        ]}
+        intensity={
+          night
+            ? 0.5
+            : 2
+        }
         castShadow
       />
 
       {night && (
         <pointLight
-          position={[0, 3, 1]}
+          position={[
+            0,
+            3,
+            1,
+          ]}
           intensity={4}
           distance={8}
           color="#ffad68"
@@ -262,20 +332,25 @@ function Scene({ activeTarget, onTargetChange, }: Props) {
 
       <RoomModel
         scene={scene}
-        onTargetChange={onTargetChange}
+        onTargetChange={
+          onTargetChange
+        }
       />
 
-      <Environment preset="apartment" />
+      <Environment
+        preset="apartment"
+      />
     </>
   );
 }
 
 /* --------------------------------------------------
-   CANVAS
+   LOADER
 -------------------------------------------------- */
 
 function RoomLoader() {
-  const { progress } = useProgress();
+  const { progress } =
+    useProgress();
 
   return (
     <Html center>
@@ -287,21 +362,30 @@ function RoomLoader() {
           letterSpacing: "0.12em",
         }}
       >
-        <div>LOADING ROOM</div>
-        <strong>{Math.round(progress)}%</strong>
+        <div>
+          LOADING ROOM
+        </div>
+
+        <strong>
+          {Math.round(
+            progress
+          )}
+          %
+        </strong>
       </div>
     </Html>
   );
 }
 
-export default function RoomScene(
-  props: Props
-) {
+/* --------------------------------------------------
+   CANVAS
+-------------------------------------------------- */
+
+export default function RoomScene(props: Props) {
   return (
     <Canvas
-      shadows
-      camera={{
-        position: [0, 0, 5],
+      shadows camera={{
+        position: [0, 0, 5,],
         fov: 45,
       }}
       dpr={[1, 1.5]}
@@ -309,14 +393,17 @@ export default function RoomScene(
         antialias: true,
       }}
     >
-      <Suspense fallback={<RoomLoader />}>
-        <Scene {...props} />
+      <Suspense
+        fallback={
+          <RoomLoader />
+        }
+      >
+        <Scene
+          {...props}
+        />
       </Suspense>
     </Canvas>
   );
 }
-/*
-  Preload ώστε το GLB να αρχίζει
-  να φορτώνει νωρίτερα.
-*/
+
 useGLTF.preload("/models/room.glb");
