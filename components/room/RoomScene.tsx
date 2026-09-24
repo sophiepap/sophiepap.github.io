@@ -1,8 +1,9 @@
 "use client";
 
 import { Canvas, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Html, useGLTF, useProgress } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState } from "react";
+import {
+  Environment, Html, useGLTF, useProgress, useTexture
+} from "@react-three/drei"; import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
 
@@ -13,61 +14,11 @@ type Props = {
 
 type CameraTarget = "room" | "computer" | "board" | "cv";
 
-/*
-  ΠΡΟΣΩΡΙΝΕΣ camera positions.
-
-  Αυτές θα τις ρυθμίσουμε αφού δούμε το πραγματικό δωμάτιο
-  και τη θέση των αντικειμένων μέσα στο Blender.
-*/
-// const cameraPositions: Record<CameraTarget, THREE.Vector3> = {
-//   room: new THREE.Vector3(6, 4, 8),
-//   computer: new THREE.Vector3(2, 2.5, 3),
-//   board: new THREE.Vector3(-3, 3, 3),
-//   cv: new THREE.Vector3(0, 2, 3),
-// };
-
-// const cameraLookAts: Record<CameraTarget, THREE.Vector3> = {
-//   room: new THREE.Vector3(0, 1.5, 0),
-//   computer: new THREE.Vector3(0, 1.8, 0),
-//   board: new THREE.Vector3(-2, 2, 0),
-//   cv: new THREE.Vector3(0, 1, 0),
-// };
-
-
 /* --------------------------------------------------
    CAMERA
 -------------------------------------------------- */
 
-// function CameraRig({ target }: { target: CameraTarget }) {
-//   const { camera } = useThree();
-
-//   const currentLook = useRef(
-//     cameraLookAts.room.clone()
-//   );
-
-//   useFrame((_, delta) => {
-//     const speed = 1 - Math.pow(0.001, delta);
-
-//     camera.position.lerp(
-//       cameraPositions[target],
-//       speed
-//     );
-
-//     currentLook.current.lerp(
-//       cameraLookAts[target],
-//       speed
-//     );
-
-//     camera.lookAt(currentLook.current);
-//   });
-
-//   return null;
-// }
-
-function CameraRig({
-  target,
-  scene,
-}: {
+function CameraRig({ target, scene, }: {
   target: CameraTarget;
   scene: THREE.Object3D;
 }) {
@@ -78,10 +29,10 @@ function CameraRig({
     target === "computer"
       ? "Camera_Computer"
       : target === "board"
-      ? "Camera_Board"
-      : target === "cv"
-      ? "Camera_CV"
-      : "Camera_Room";
+        ? "Camera_Board"
+        : target === "cv"
+          ? "Camera_CV"
+          : "Camera_Room";
 
   useFrame((_, delta) => {
     const blenderCamera = scene.getObjectByName(cameraName);
@@ -130,50 +81,55 @@ function CameraRig({
    ROOM MODEL
 -------------------------------------------------- */
 
-function RoomModel({
-  scene,
-  onTargetChange,
-}: {
+function RoomModel({ scene, onTargetChange, }: {
   scene: THREE.Object3D;
   onTargetChange: (target: string | null) => void;
 }) {
   const router = useRouter();
-
   const [hovered, setHovered] = useState<string | null>(
     null
   );
 
-  /*
-    Ενεργοποιούμε shadows σε όλα τα meshes
-    που ήρθαν από το Blender.
-  */
+  // Φόρτωση textures για τα αντικειμενα που δεν έχουν και είναι γυμνούλικα
+  const deskTextures = useTexture({
+    map: "/textures/Desk/TexturesCom_BleachedOakVeneer_M.png",
+  });
+  deskTextures.map.colorSpace = THREE.SRGBColorSpace;
+
+
+  //  Ενεργοποιούμε shadows σε όλα τα meshes που ήρθαν από το Blender.
   useEffect(() => {
     scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        object.castShadow = true;
-        object.receiveShadow = true;
+      if (!(object instanceof THREE.Mesh)) return;
+
+      object.castShadow = true;
+      object.receiveShadow = true;
+
+      if (object.name === "Desk") {
+        object.material = new THREE.MeshStandardMaterial({
+          map: deskTextures.map,
+          // normalMap: deskTextures.normalMap,
+          // roughnessMap: deskTextures.roughnessMap,
+        });
       }
+
+
     });
-  }, [scene]);
+  }, [scene, deskTextures]);
 
 
   /*
     Ψάχνουμε προς τα πάνω στο hierarchy
     μέχρι να βρούμε ένα από τα αντικείμενα
     που μας ενδιαφέρουν.
-
     Άρα:
-
     Computer
        └ Monitor
            └ Screen
-
     Αν πατήσεις Screen,
     θα καταλάβει ότι ανήκει στο Computer.
   */
-  function findInteractiveObject(
-    object: THREE.Object3D
-  ): string | null {
+  function findInteractiveObject(object: THREE.Object3D): string | null {
     const interactables = [
       "Computer",
       "Bookshelf",
@@ -194,13 +150,10 @@ function RoomModel({
     return null;
   }
 
-
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
 
-    const target = findInteractiveObject(
-      event.object
-    );
+    const target = findInteractiveObject(event.object);
 
     if (!target) return;
 
@@ -208,39 +161,27 @@ function RoomModel({
       case "Computer":
         onTargetChange("computer");
         break;
-
       case "Board":
         onTargetChange("board");
         break;
-
       case "CV":
         onTargetChange("cv");
         break;
-
       case "Bookshelf":
         router.push("/library");
         break;
     }
   }
 
-
-  function handlePointerMove(
-    event: ThreeEvent<PointerEvent>
-  ) {
-    const target = findInteractiveObject(
-      event.object
-    );
-
+  function handlePointerMove(event: ThreeEvent<PointerEvent>) {
+    const target = findInteractiveObject(event.object);
     setHovered(target);
-
-    document.body.style.cursor =
-      target ? "pointer" : "default";
+    document.body.style.cursor = target ? "pointer" : "default";
   }
 
 
   function handlePointerOut() {
     setHovered(null);
-
     document.body.style.cursor = "default";
   }
 
@@ -281,14 +222,13 @@ function Scene({ activeTarget, onTargetChange, }: Props) {
   const hour = new Date().getHours();
   const night = hour >= 20 || hour < 7;
 
-  const cameraTarget: CameraTarget =
-    activeTarget === "computer"
-      ? "computer"
-      : activeTarget === "board"
-        ? "board"
-        : activeTarget === "cv"
-          ? "cv"
-          : "room";
+  const cameraTarget: CameraTarget = activeTarget === "computer"
+    ? "computer"
+    : activeTarget === "board"
+      ? "board"
+      : activeTarget === "cv"
+        ? "cv"
+        : "room";
 
   return (
     <>
