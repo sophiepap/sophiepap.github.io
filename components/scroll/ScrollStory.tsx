@@ -307,11 +307,10 @@ export default function ScrollStory() {
 
       <section className="story-section hero-section">
         <div className="reveal story-copy">
-          <p className="eyebrow">Ο ΔΕΣΜΩΤΗΣ ΤΗΣ ΚΑΤΑΡΑΣ</p>
+          <p className="eyebrow"></p>
 
           <h1>
-            "Μία γραμμή από λευκή φωτεινή άχλη, απλωνόταν μέσα στο
-            απύθμενο σκοτάδι του Ρήγματος".
+
           </h1>
         </div>
       </section>
@@ -319,36 +318,36 @@ export default function ScrollStory() {
       <section className="story-section middle-section">
         <div className="floating-line" />
 
-        <article className="media-card reveal media-card-left">
-          <div className="poster poster-book">
-            <span>BOOK</span>
-          </div>
+        <div className="fall-text reveal fall-text-left">
+          <p>«Και έπεφτε.»</p>
+        </div>
 
-          <div>
-            <p className="eyebrow">BOOK</p>
-            <h2>The Secret History</h2>
+        <div className="fall-text reveal fall-text-right">
+          <p>
+            «Και έπεφτε, μέχρι που την κατέπνιξε η πύλη. Το φως από το
+            σπήλαιο χανόταν και εκείνη πανικόβλητη σκεφτόταν χάος και το
+            τίποτα την ίδια στιγμή.»
+          </p>
+        </div>
 
-            <p>
-              Placeholder note about why a particular book mattered
-              creatively.
-            </p>
-          </div>
-        </article>
+        <div className="fall-text reveal fall-text-left">
+          <p>
+            «Και καθώς έπεφτε συνειδητοποιούσε ότι εν μέρει το σχέδιο του
+            Έλιας είχε μερικώς πετύχει, καθώς τα απομεινάρια από τις φλόγες
+            φούντωναν από το οξυγόνο.»
+          </p>
+        </div>
 
-        <article className="media-card reveal media-card-right">
-          <div className="poster poster-film">
-            <span>FILM</span>
-          </div>
+        <div className="fall-text reveal fall-text-right">
+          <p>
+            «Έπεφτε μέσα στο σκοτάδι μέχρι αυτό πήρε μορφή και από εκεί
+            είδε αστέρια.»
+          </p>
+        </div>
 
-          <div>
-            <p className="eyebrow">FILM</p>
-            <h2>Lost Highway</h2>
-
-            <p>
-              This section can animate in differently for each medium.
-            </p>
-          </div>
-        </article>
+        <div className="fall-text reveal fall-text-center">
+          <p>«Πέρασε ανάμεσά τους.»</p>
+        </div>
       </section>
 
       <section className="story-section warm-section">
@@ -379,17 +378,37 @@ export default function ScrollStory() {
       </section>
 
       <section className="story-section ending-section">
-        <div className="reveal ending-copy">
-          <p className="eyebrow">END OF SHELF</p>
+        <div className="book-ending reveal">
+          <div className="book-cover-wrap">
+            <img
+              src="/the-warden-series-assets/dream-warden.png"
+              alt="Ο Δεσμώτης της Κατάρας"
+              className="book-cover"
+            />
+          </div>
 
-          <h2>
-            More things can be added without changing the layout.
-          </h2>
+          <div className="book-info">
+            <p className="eyebrow">ΔΕΣΜΩΤΕΣ</p>
 
-          <p>
-            Later this can be powered by MDX so every influence is just
-            a small content file rather than a hard-coded React block.
-          </p>
+            <h2>Ο Δεσμώτης του Ονείρου</h2>
+
+            <p className="book-subtitle">
+              Urban Dark Fantasy • Adventure
+            </p>
+
+            <p className="book-description">
+              Βρισκόμαστε στην έρημο της Αριζόνας στην Αμερική τον Δεκέμβρη του 2005,
+
+Τρία αδέρφια κυνηγών βρίσκουν μία μάγισσα, η οποία έχει έρθει από μία εναλλακτική εκδοχή του κόσμου τους. Η ιστορία ακολουθεί δύο διαφορετικά timelines. Στο πρώτο βλέπουμε πώς η μάγισσα (Ελίζαμπεθ) κατέληξε στον κόσμο τους. Στο δεύτερο βρισκόμαστε στο παρόν, όπου οι κυνηγοί (Σεμπάστιαν, Χοακίν και Κέιτ) τη βοηθούν να επιστρέψει πίσω, ενώ εκείνη τους βοηθά να σταματήσουν την επερχόμενη Αποκάλυψη.
+
+            </p>
+
+            <div className="book-meta">
+              <span>Βιβλίο 1</span>
+              <span>Fantasy</span>
+              <span>Δεσμώτες</span>
+            </div>
+          </div>
         </div>
       </section>
     </div>

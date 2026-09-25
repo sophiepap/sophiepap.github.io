@@ -10,7 +10,7 @@ export default function LibraryPage() {
         <Link href="/" className="story-back">
           ← back to room
         </Link>
-        <span>LIBRARY / INFLUENCES</span>
+        <span>ΔΕΣΜΩΤΕΣ</span>
       </div>
 
       <ScrollStory />
