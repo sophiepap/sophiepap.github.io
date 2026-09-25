@@ -12,3 +12,9 @@ story.private.ts
 
 # Private unpublished writing assets
 /public/writing/private/
+
+# Auto-generated active story content
+/content/story.generated.ts
+
+# Local environment
+.env.local

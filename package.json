@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "story:select": "node scripts/select-story.mjs",
+    "predev": "npm run story:select",
     "dev": "next dev",
+    "prebuild": "npm run story:select",
     "build": "next build",
     "start": "next start"
   },
