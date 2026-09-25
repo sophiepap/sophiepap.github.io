@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { storyContent } from "@/content/story.generated";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ScrollStory() {
