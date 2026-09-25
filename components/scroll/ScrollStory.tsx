@@ -2,8 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { storyGenerated } from "@/content/story";
+import { storyContent } from "@/content/story.generated";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,7 +14,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          INITIAL STATES
       -------------------------------------------------- */
-
       gsap.set(".fissure-mark", {
         scale: 0.9,
         opacity: 0,
@@ -44,13 +42,11 @@ export default function ScrollStory() {
       -------------------------------------------------- */
 
       gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
-        gsap.fromTo(
-          el,
-          {
-            opacity: 0,
-            y: 80,
-            rotate: 2,
-          },
+        gsap.fromTo(el, {
+          opacity: 0,
+          y: 80,
+          rotate: 2,
+        },
           {
             opacity: 1,
             y: 0,
@@ -70,7 +66,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          FLOATING LINE
       -------------------------------------------------- */
-
       gsap.to(".floating-line", {
         height: "70vh",
         scrollTrigger: {
@@ -84,7 +79,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          MAIN BACKGROUND / FALL SEQUENCE
       -------------------------------------------------- */
-
       const backgroundTimeline = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
@@ -97,7 +91,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          1. Μένουμε λίγο στο σκοτάδι
       -------------------------------------------------- */
-
       backgroundTimeline.to({}, {
         duration: 0.35,
       });
@@ -105,7 +98,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          2. Εμφανίζεται το Ρήγμα / άστρο
       -------------------------------------------------- */
-
       backgroundTimeline.to(".fissure-mark", {
         opacity: 1,
         scale: 1,
@@ -116,15 +108,12 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          3. Το Ρήγμα αρχίζει να βγάζει φως
       -------------------------------------------------- */
-
-      backgroundTimeline.to(
-        ".fissure-glow",
-        {
-          opacity: 1,
-          scale: 1.15,
-          duration: 0.5,
-          ease: "none",
-        },
+      backgroundTimeline.to(".fissure-glow", {
+        opacity: 1,
+        scale: 1.15,
+        duration: 0.5,
+        ease: "none",
+      },
         "<"
       );
 
@@ -135,22 +124,19 @@ export default function ScrollStory() {
         ease: "none",
       });
 
-      backgroundTimeline.to(
-        ".story-bg",
-        {
-          "--bg1": "#07080d",
-          "--bg2": "#0b0d14",
-          "--bg3": "#171b27",
-          duration: 0.8,
-          ease: "none",
-        },
+      backgroundTimeline.to(".story-bg", {
+        "--bg1": "#07080d",
+        "--bg2": "#0b0d14",
+        "--bg3": "#171b27",
+        duration: 0.8,
+        ease: "none",
+      },
         "<"
       );
 
       /* --------------------------------------------------
          4. Εμφανίζεται η φιγούρα
       -------------------------------------------------- */
-
       backgroundTimeline.to(".falling-figure", {
         opacity: 0.9,
         y: 0,
@@ -161,7 +147,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          5. Η φιγούρα ξεκινάει να πέφτει
       -------------------------------------------------- */
-
       backgroundTimeline.to(".falling-figure", {
         y: 220,
         duration: 1.1,
@@ -171,7 +156,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          6. Μαύρο → μπλε
       -------------------------------------------------- */
-
       backgroundTimeline.to(".story-bg", {
         "--bg1": "#11182a",
         "--bg2": "#1e2d55",
@@ -183,60 +167,48 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          7. Fade-in τα αστέρια
       -------------------------------------------------- */
-
-      backgroundTimeline.to(
-        ".stars-overlay",
-        {
-          opacity: 0.85,
-          duration: 0.9,
-          ease: "none",
-        },
+      backgroundTimeline.to(".stars-overlay", {
+        opacity: 0.85,
+        duration: 0.9,
+        ease: "none",
+      },
         "<"
       );
 
       /* --------------------------------------------------
          8. Η φιγούρα συνεχίζει να πέφτει
       -------------------------------------------------- */
-
-      backgroundTimeline.to(
-        ".falling-figure",
-        {
-          y: 520,
-          duration: 1.5,
-          ease: "none",
-        },
+      backgroundTimeline.to(".falling-figure", {
+        y: 520,
+        duration: 1.5,
+        ease: "none",
+      },
         "<"
       );
 
       /* --------------------------------------------------
          9. Το Ρήγμα σβήνει
       -------------------------------------------------- */
-
-      backgroundTimeline.to(
-        ".fissure-mark",
-        {
-          opacity: 0,
-          duration: 0.8,
-          ease: "none",
-        },
+      backgroundTimeline.to(".fissure-mark", {
+        opacity: 0,
+        duration: 0.8,
+        ease: "none",
+      },
         "<0.4"
       );
 
-      backgroundTimeline.to(
-        ".fissure-glow",
-        {
-          opacity: 0,
-          scale: 2.6,
-          duration: 0.8,
-          ease: "none",
-        },
+      backgroundTimeline.to(".fissure-glow", {
+        opacity: 0,
+        scale: 2.6,
+        duration: 0.8,
+        ease: "none",
+      },
         "<"
       );
 
       /* --------------------------------------------------
          10. Μένουμε λίγο στον μπλε έναστρο ουρανό
       -------------------------------------------------- */
-
       backgroundTimeline.to({}, {
         duration: 1.2,
       });
@@ -244,7 +216,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          11. Η φιγούρα συνεχίζει χαμηλότερα και σβήνει
       -------------------------------------------------- */
-
       backgroundTimeline.to(".falling-figure", {
         y: 820,
         opacity: 0,
@@ -255,7 +226,6 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          12. Μπλε → καφέ
       -------------------------------------------------- */
-
       backgroundTimeline.to(".story-bg", {
         "--bg1": "#341606",
         "--bg2": "#632600",
@@ -267,87 +237,42 @@ export default function ScrollStory() {
       /* --------------------------------------------------
          13. Τα αστέρια σβήνουν
       -------------------------------------------------- */
-
-      backgroundTimeline.to(
-        ".stars-overlay",
-        {
-          opacity: 0,
-          duration: 1.2,
-          ease: "none",
-        },
+      backgroundTimeline.to(".stars-overlay", {
+        opacity: 0,
+        duration: 1.2,
+        ease: "none",
+      },
         "<"
       );
     }, root);
-
     return () => ctx.revert();
   }, []);
 
   return (
     <div ref={root} className="scroll-story">
       <div className="story-bg" />
-
-      <img src={storyGenerated.assets.fissure} alt="" className="fissure-mark" />
+      <img src={storyContent.assets.fissure} alt="" className="fissure-mark" />
       <div className="fissure-glow" />
-
-      <img src={storyGenerated.assets.fallingFigure} alt="" className="falling-figure" />
-      <img src={storyGenerated.assets.stars} alt="" className="stars-overlay" />
-
+      <img src={storyContent.assets.fallingFigure} alt="" className="falling-figure" />
+      <img src={storyContent.assets.stars} alt="" className="stars-overlay" />
       <section className="story-section hero-section">
         <div className="reveal story-copy">
           <p className="eyebrow">
-            {storyGenerated.hero.eyebrow}
+            {storyContent.hero.eyebrow}
           </p>
-
           <h1>
-            {storyGenerated.hero.quote}
+            {storyContent.hero.quote}
           </h1>
         </div>
       </section>
-
-      {/* <section className="story-section middle-section">
-        <div className="floating-line" />
-
-        <div className="fall-text reveal fall-text-left">
-          <p>«Και έπεφτε.»</p>
-        </div>
-
-        <div className="fall-text reveal fall-text-right">
-          <p>
-            «Και έπεφτε, μέχρι που την κατέπνιξε η πύλη. Το φως από το
-            σπήλαιο χανόταν και εκείνη πανικόβλητη σκεφτόταν χάος και το
-            τίποτα την ίδια στιγμή.»
-          </p>
-        </div>
-
-        <div className="fall-text reveal fall-text-left">
-          <p>
-            «Και καθώς έπεφτε συνειδητοποιούσε ότι εν μέρει το σχέδιο του
-            Έλιας είχε μερικώς πετύχει, καθώς τα απομεινάρια από τις φλόγες
-            φούντωναν από το οξυγόνο.»
-          </p>
-        </div>
-
-        <div className="fall-text reveal fall-text-right">
-          <p>
-            «Έπεφτε μέσα στο σκοτάδι μέχρι αυτό πήρε μορφή και από εκεί
-            είδε αστέρια.»
-          </p>
-        </div>
-
-        <div className="fall-text reveal fall-text-center">
-          <p>«Πέρασε ανάμεσά τους.»</p>
-        </div>
-      </section> */}
-
-
       <section className="story-section middle-section">
         <div className="floating-line" />
 
-        {storyGenerated.fallTexts.map(
+        {storyContent.fallTexts.map(
           (text, index) => {
             const alignment =
               index ===
-                storyGenerated.fallTexts.length - 1
+                storyContent.fallTexts.length - 1
                 ? "fall-text-center"
                 : index % 2 === 0
                   ? "fall-text-left"
@@ -369,11 +294,11 @@ export default function ScrollStory() {
       <section className="story-section warm-section">
         <div className="quote-block reveal">
           <h2>
-            «{storyGenerated.warmQuote.text}»
+            «{storyContent.warmQuote.text}»
           </h2>
 
           <p className="quote-attribution">
-            {storyGenerated.warmQuote.attribution}
+            {storyContent.warmQuote.attribution}
           </p>
         </div>
       </section>
@@ -382,31 +307,31 @@ export default function ScrollStory() {
         <div className="book-ending reveal">
           <div className="book-cover-wrap">
             <img
-              src={storyGenerated.book.cover}
-              alt={storyGenerated.book.title}
+              src={storyContent.book.cover}
+              alt={storyContent.book.title}
               className="book-cover"
             />
           </div>
 
           <div className="book-info">
             <p className="eyebrow">
-              {storyGenerated.book.series}
+              {storyContent.book.series}
             </p>
 
             <h2>
-              {storyGenerated.book.title}
+              {storyContent.book.title}
             </h2>
 
             <p className="book-subtitle">
-              {storyGenerated.book.subtitle}
+              {storyContent.book.subtitle}
             </p>
 
             <p className="book-description">
-              {storyGenerated.book.description}
+              {storyContent.book.description}
             </p>
 
             <div className="book-meta">
-              {storyGenerated.book.meta.map(
+              {storyContent.book.meta.map(
                 (item) => (
                   <span key={item}>
                     {item}
