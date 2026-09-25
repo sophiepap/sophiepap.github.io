@@ -109,8 +109,19 @@ function RoomModel({ scene, onTargetChange, }: {
     map: "/textures/Desk/TexturesCom_BleachedOakVeneer_M.png",
   });
 
-  deskTextures.map.colorSpace =
-    THREE.SRGBColorSpace;
+  deskTextures.map.colorSpace = THREE.SRGBColorSpace;
+
+  // adding textures to walls and floor
+  const wallTexture = useTexture({
+    map: "/textures/Wall/TexturesCom_Plaster_Painted_1K_albedo.png",
+  });
+
+  wallTexture.map.colorSpace = THREE.SRGBColorSpace;
+
+  wallTexture.map.wrapS = THREE.RepeatWrapping;
+  wallTexture.map.wrapT = THREE.RepeatWrapping;
+  wallTexture.map.repeat.set(0.1, 0.1);
+  wallTexture.map.needsUpdate = true;
 
   /* --------------------------------------------------
      HELPERS
@@ -139,27 +150,46 @@ function RoomModel({ scene, onTargetChange, }: {
 
   useEffect(() => {
     scene.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) {
-        return;
-      }
+      if (!(object instanceof THREE.Mesh)) return;
 
       object.castShadow = true;
       object.receiveShadow = true;
 
+      // Desk
       if (object.name === "Desk") {
-        object.material = new THREE.MeshStandardMaterial(
-          {
-            map: deskTextures.map,
-            roughness: 0.65,
-          }
-        );
+        const material = new THREE.MeshStandardMaterial({
+          map: deskTextures.map,
+          roughness: 0.65,
+          metalness: 0,
+        });
+
+        material.needsUpdate = true;
+        object.material = material;
+      }
+
+      // Walls
+      const wallNames = [
+        "Cube.001",
+        "Cube.002",
+        "Cube.003",
+      ];
+
+      if (wallNames.includes(object.name)) {
+        console.log("Applying wall texture to:", object.name);
+
+        const material = new THREE.MeshStandardMaterial({
+          map: wallTexture.map,
+          roughness: 1,
+          metalness: 0,
+        });
+
+        material.needsUpdate = true;
+        object.material = material;
       }
     });
   }, [
-    scene,
-    deskTextures,
+    scene, deskTextures.map, wallTexture.map,
   ]);
-
   /* --------------------------------------------------
      HOVER ANIMATION
   -------------------------------------------------- */
