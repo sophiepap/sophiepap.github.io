@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { storyContent } from "@/content/story";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -285,37 +286,25 @@ export default function ScrollStory() {
     <div ref={root} className="scroll-story">
       <div className="story-bg" />
 
-      <img
-        src="/the-warden-series-assets/star-fissure.png"
-        alt=""
-        className="fissure-mark"
-      />
-
+      <img src={storyContent.assets.fissure} alt="" className="fissure-mark" />
       <div className="fissure-glow" />
 
-      <img
-        src="/the-warden-series-assets/falling-figure.png"
-        alt=""
-        className="falling-figure"
-      />
-
-      <img
-        src="/the-warden-series-assets/stars.jpg"
-        alt=""
-        className="stars-overlay"
-      />
+      <img src={storyContent.assets.fallingFigure} alt="" className="falling-figure" />
+      <img src={storyContent.assets.stars} alt="" className="stars-overlay" />
 
       <section className="story-section hero-section">
         <div className="reveal story-copy">
-          <p className="eyebrow"></p>
+          <p className="eyebrow">
+            {storyContent.hero.eyebrow}
+          </p>
 
           <h1>
-
+            {storyContent.hero.quote}
           </h1>
         </div>
       </section>
 
-      <section className="story-section middle-section">
+      {/* <section className="story-section middle-section">
         <div className="floating-line" />
 
         <div className="fall-text reveal fall-text-left">
@@ -348,32 +337,44 @@ export default function ScrollStory() {
         <div className="fall-text reveal fall-text-center">
           <p>«Πέρασε ανάμεσά τους.»</p>
         </div>
+      </section> */}
+
+
+      <section className="story-section middle-section">
+        <div className="floating-line" />
+
+        {storyContent.fallTexts.map(
+          (text, index) => {
+            const alignment =
+              index ===
+                storyContent.fallTexts.length - 1
+                ? "fall-text-center"
+                : index % 2 === 0
+                  ? "fall-text-left"
+                  : "fall-text-right";
+
+            return (
+              <div
+                key={index}
+                className={`fall-text reveal ${alignment}`}
+              >
+                <p>«{text}»</p>
+              </div>
+            );
+          }
+        )}
       </section>
 
+
       <section className="story-section warm-section">
-        <article className="media-card reveal media-card-left">
-          <div className="poster poster-game">
-            <span>GAME</span>
-          </div>
-
-          <div>
-            <p className="eyebrow">VIDEOGAME</p>
-            <h2>Life is Strange</h2>
-
-            <p>
-              The palette gradually shifts as the visitor scrolls
-              deeper down the page.
-            </p>
-          </div>
-        </article>
-
         <div className="quote-block reveal">
-          <span>creative influence #04</span>
-
           <h2>
-            «Δεν είμαι από εδώ…» Η φωνή της Ελίζαμπεθ Χάντερκι,
-            χρωματισμένη από δισταγμό, ξεκίνησε να μιλά.
+            «{storyContent.warmQuote.text}»
           </h2>
+
+          <p className="quote-attribution">
+            {storyContent.warmQuote.attribution}
+          </p>
         </div>
       </section>
 
@@ -381,32 +382,37 @@ export default function ScrollStory() {
         <div className="book-ending reveal">
           <div className="book-cover-wrap">
             <img
-              src="/the-warden-series-assets/dream-warden.png"
-              alt="Ο Δεσμώτης της Κατάρας"
+              src={storyContent.book.cover}
+              alt={storyContent.book.title}
               className="book-cover"
             />
           </div>
 
           <div className="book-info">
-            <p className="eyebrow">ΔΕΣΜΩΤΕΣ</p>
+            <p className="eyebrow">
+              {storyContent.book.series}
+            </p>
 
-            <h2>Ο Δεσμώτης του Ονείρου</h2>
+            <h2>
+              {storyContent.book.title}
+            </h2>
 
             <p className="book-subtitle">
-              Urban Dark Fantasy • Adventure
+              {storyContent.book.subtitle}
             </p>
 
             <p className="book-description">
-              Βρισκόμαστε στην έρημο της Αριζόνας στην Αμερική τον Δεκέμβρη του 2005,
-
-Τρία αδέρφια κυνηγών βρίσκουν μία μάγισσα, η οποία έχει έρθει από μία εναλλακτική εκδοχή του κόσμου τους. Η ιστορία ακολουθεί δύο διαφορετικά timelines. Στο πρώτο βλέπουμε πώς η μάγισσα (Ελίζαμπεθ) κατέληξε στον κόσμο τους. Στο δεύτερο βρισκόμαστε στο παρόν, όπου οι κυνηγοί (Σεμπάστιαν, Χοακίν και Κέιτ) τη βοηθούν να επιστρέψει πίσω, ενώ εκείνη τους βοηθά να σταματήσουν την επερχόμενη Αποκάλυψη.
-
+              {storyContent.book.description}
             </p>
 
             <div className="book-meta">
-              <span>Βιβλίο 1</span>
-              <span>Fantasy</span>
-              <span>Δεσμώτες</span>
+              {storyContent.book.meta.map(
+                (item) => (
+                  <span key={item}>
+                    {item}
+                  </span>
+                )
+              )}
             </div>
           </div>
         </div>

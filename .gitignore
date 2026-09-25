@@ -7,3 +7,8 @@ out/
 
 .DS_Store
 Thumbs.db
+
+story.private.ts
+
+# Private unpublished writing assets
+/public/writing/private/
