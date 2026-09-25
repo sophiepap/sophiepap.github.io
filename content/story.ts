@@ -1,4 +1,3 @@
-import { storyPlaceholder } from "./story.placeholder";
+import { storyContent } from "./story.generated";
 
-
-export const storyContent = storyPlaceholder;
+export const storyGenerated = storyContent;

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { storyContent } from "@/content/story";
+import { storyGenerated } from "@/content/story";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -286,20 +286,20 @@ export default function ScrollStory() {
     <div ref={root} className="scroll-story">
       <div className="story-bg" />
 
-      <img src={storyContent.assets.fissure} alt="" className="fissure-mark" />
+      <img src={storyGenerated.assets.fissure} alt="" className="fissure-mark" />
       <div className="fissure-glow" />
 
-      <img src={storyContent.assets.fallingFigure} alt="" className="falling-figure" />
-      <img src={storyContent.assets.stars} alt="" className="stars-overlay" />
+      <img src={storyGenerated.assets.fallingFigure} alt="" className="falling-figure" />
+      <img src={storyGenerated.assets.stars} alt="" className="stars-overlay" />
 
       <section className="story-section hero-section">
         <div className="reveal story-copy">
           <p className="eyebrow">
-            {storyContent.hero.eyebrow}
+            {storyGenerated.hero.eyebrow}
           </p>
 
           <h1>
-            {storyContent.hero.quote}
+            {storyGenerated.hero.quote}
           </h1>
         </div>
       </section>
@@ -343,11 +343,11 @@ export default function ScrollStory() {
       <section className="story-section middle-section">
         <div className="floating-line" />
 
-        {storyContent.fallTexts.map(
+        {storyGenerated.fallTexts.map(
           (text, index) => {
             const alignment =
               index ===
-                storyContent.fallTexts.length - 1
+                storyGenerated.fallTexts.length - 1
                 ? "fall-text-center"
                 : index % 2 === 0
                   ? "fall-text-left"
@@ -369,11 +369,11 @@ export default function ScrollStory() {
       <section className="story-section warm-section">
         <div className="quote-block reveal">
           <h2>
-            «{storyContent.warmQuote.text}»
+            «{storyGenerated.warmQuote.text}»
           </h2>
 
           <p className="quote-attribution">
-            {storyContent.warmQuote.attribution}
+            {storyGenerated.warmQuote.attribution}
           </p>
         </div>
       </section>
@@ -382,31 +382,31 @@ export default function ScrollStory() {
         <div className="book-ending reveal">
           <div className="book-cover-wrap">
             <img
-              src={storyContent.book.cover}
-              alt={storyContent.book.title}
+              src={storyGenerated.book.cover}
+              alt={storyGenerated.book.title}
               className="book-cover"
             />
           </div>
 
           <div className="book-info">
             <p className="eyebrow">
-              {storyContent.book.series}
+              {storyGenerated.book.series}
             </p>
 
             <h2>
-              {storyContent.book.title}
+              {storyGenerated.book.title}
             </h2>
 
             <p className="book-subtitle">
-              {storyContent.book.subtitle}
+              {storyGenerated.book.subtitle}
             </p>
 
             <p className="book-description">
-              {storyContent.book.description}
+              {storyGenerated.book.description}
             </p>
 
             <div className="book-meta">
-              {storyContent.book.meta.map(
+              {storyGenerated.book.meta.map(
                 (item) => (
                   <span key={item}>
                     {item}
