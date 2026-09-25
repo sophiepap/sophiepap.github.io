@@ -1,4 +1,4 @@
-export const storyPlaceholder = {
+export const storyContent = {
     hero: {
         eyebrow: "WRITING PROJECT",
         quote:
